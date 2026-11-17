@@ -2,6 +2,19 @@
 
 A collection of agentic tools and Claude skills for supply chain operations — built for practitioners who want AI to do the routine work so they can focus on decisions that matter.
 
+## Design & research
+
+- [`design.md`](./design.md) — architecture, and how each asset maps onto the target platform
+- [`research/2026-11-landscape.md`](./research/2026-11-landscape.md) — open-source landscape, data sources, testing approaches
+
+**Target platform:** this work ships on Microsoft Copilot Studio (the sanctioned agent platform here);
+Claude Code is the development and evaluation environment. Keep contributions portable — see `design.md` §4–5
+for what carries over and what does not. In short: domain knowledge stays in `SKILL.md` + `references/`,
+deterministic calculation belongs in the MCP server, and nothing in the production path may rely on
+shell access or the local filesystem.
+
+---
+
 ## Skills
 
 ### [`logistics-billing-reconciliation`](./logistics-billing-reconciliation/)
