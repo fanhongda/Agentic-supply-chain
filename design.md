@@ -217,11 +217,11 @@ POST /copilotstudio/environments/{envId}/bots/{botId}/api/makerevaluation/testse
 - [x] 补 0.5 kg 进位与重量档位，理清与容差的关系 → 新增共用文件 `references/weight-rules.md`
 - [x] **按 D2 改 `description` 为单行**（182 字符），触发细节移入正文 `## When to Use This Skill`
 
-**Phase 1 — 测试基建 + 前置条件确认（1 周）**
-- [ ] `claude plugin eval init`，10 个用例（3 正常 / 5 对抗 / 2 负样本）
-- [ ] **跑出 Δ 并存档**（迁移后不可再得，见 §5.1）
-- [ ] 用例语料存成平台中立格式：`evals/corpus/<case>/{input/, expected.yaml}`，再由各平台的 runner 读取
-- [ ] **并行推进：找 IT/安全确认三件事** —— ① 自建 MCP server 能否公网暴露给 Copilot Studio；② DLP 策略是否放行自定义连接器；③ Claude 模型 cross-geo 处理是否过合规
+**Phase 1 — 测试基建 + 前置条件确认（1 周）** ✅ 2026-11-18 完成
+- [x] 评测套件：**12 个**用例（3 正常 / 6 对抗 / 2 负样本 / 1 非触发）→ `evals/`
+- [x] **跑出 Δ 并存档** → `evals/baseline/2026-11-18-baseline.md`，**平均 Δ +0.32**，12 个用例中 10 个满分。另存了修复前那一轮（`-pre-fix.md`），它是抓出 §D1 缺陷的记录
+- [x] 平台中立语料 `evals/corpus/*.yaml` + 适配器 `evals/build.py`（Copilot Studio 适配器待 Phase 4）
+- [x] 三个前置问题已写成可直接发出的文档 → `docs/copilot-studio-prerequisites.md`。**⚠️ 仍待 IT/安全答复**，其中第 1 条决定 Phase 2 怎么写
 
 **Phase 2 — 三层分离 + MCP server（2–3 周）**
 - [ ] `schemas/`：invoice / rate-card / surcharge（字段名对齐 IATA ONE Record、DCSA）
