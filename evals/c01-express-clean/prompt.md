@@ -15,6 +15,7 @@ Invoice number: DE-2026-118842        Invoice date: 2026-11-12
 Account number: 950114227
 Shipment / waybill: 7712094558        Ship date: 2026-11-05
 Service: EXPRESS WORLDWIDE
+Bill to: Kessler Werkzeug GmbH (CONSIGNEE)
 Shipper: Ningbo Hartman Tools Co. Ltd, Ningbo CN
 Consignee: Kessler Werkzeug GmbH, Dusseldorf DE
 Origin: Ningbo, CN     Destination: Dusseldorf, DE

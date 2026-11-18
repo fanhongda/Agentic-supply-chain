@@ -9,6 +9,20 @@ all reference this file — do not restate these rules or these tables in a modu
 
 ---
 
+## Two weights, and they are not the same
+
+Keeping these apart prevents the most expensive false positive in this skill.
+
+| Term | Meaning |
+|---|---|
+| **Chargeable weight** | `MAX(actual, volumetric)`, aggregated per §3 and rounded up per §2. A property of the shipment |
+| **Billed weight** | The weight the carrier actually charges on. Equals the chargeable weight **or a higher weight break** when that break makes the total cheaper (§4). A billing decision |
+
+So after a legitimate break upgrade, **billed weight > chargeable weight, and that is correct**.
+Any rule phrased as "billed weight must not exceed chargeable weight" is wrong on its face.
+
+---
+
 ## The four steps, in order
 
 Order matters. Applying the tolerance before the rounding step produces false positives.
@@ -104,6 +118,10 @@ dropping the second one reintroduces the false positive.
 Compare the **total charge**, not the weight figure alone. Only flag a weight discrepancy when
 the billed weight is higher *and* the resulting charge is higher than this minimum.
 
+After a break upgrade the billed weight exceeds the chargeable weight by design. Carry the
+**billed** weight into any per-unit surcharge whose notice is written on billed weight — see
+`air-module.md` §5, and the precedence rule in `SKILL.md`.
+
 ---
 
 ## 5. Tolerance
@@ -112,7 +130,7 @@ Once rounding (§2) and breaks (§4) are modelled explicitly, the expected weigh
 
 | Comparison | Tolerance | Verdict outside tolerance |
 |---|---|---|
-| Billed weight vs expected billed weight | **0.01 kg** (floating-point noise only) | Billed **higher** → ❌ overcharge. Billed **lower** → ❓ (carrier may re-bill) |
+| Billed weight vs expected billed weight — where "expected" already accounts for rounding (§2) **and** a cheaper break (§4) | **0.01 kg** (floating-point noise only) | Billed **higher** → ❌ overcharge. Billed **lower** → ❓ (carrier may re-bill) |
 | Billed freight vs `expected_freight` (§4) | Currency rounding unit (e.g. \$0.01) | ❌ |
 
 > **Do not use a 0.5 kg tolerance.** It was a proxy for unmodelled rounding and it fails in both

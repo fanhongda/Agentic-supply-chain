@@ -80,13 +80,20 @@ If DHC is billed to consignee under a DDP shipment → ❌ (incoterm violation)
 | **Per kg** (most common) | `rate_per_kg × chargeable_weight` | Airlines publish FSC as e.g. USD 0.85/kg by region |
 | Percentage | `base_freight × published_%` | Used by some carriers and most forwarder resale tariffs |
 
-Two consequences of the per-kg basis:
+**Which weight does the per-kg rate apply to?** Read it off the notice; do not assume.
 
-1. **FSC scales with chargeable weight, not actual weight.** Use the billed weight derived in §1,
-   including the rounding step. An FSC computed on actual weight when chargeable weight is higher
-   understates it; computed on a weight higher than §1's figure, it is an overcharge → ❌.
-2. **A weight-break discount does not reduce FSC.** The per-kg FSC applies to the billed weight
-   regardless of which break the freight rate came from.
+| What the notice says | Weight to use |
+|---|---|
+| "per kg of **billed weight**" | The billed weight, **including a weight-break upgrade** (`weight-rules.md` §4). If freight was billed at 100 kg on a 95 kg shipment, the surcharge is on 100 kg |
+| "per kg of **chargeable weight**" | The chargeable weight, i.e. before any break upgrade |
+| Silent on the weight | Default to chargeable weight. If a break upgrade makes the two differ, report the difference as ❓ with both figures — not as ❌ |
+
+Two things this rules out:
+
+1. **Never compute FSC on actual weight** when the volumetric weight is higher. That understates it.
+2. **A figure that matches the notice's own stated basis is not a discrepancy**, even when it
+   exceeds what this skill's default would produce. The notice governs — see the precedence rule
+   in `SKILL.md`.
 
 **Effective date matters:** airlines revise FSC **monthly or quarterly** against jet fuel indices.
 Use the rate effective on the **shipment date**, not today's rate. Invoices commonly arrive after
@@ -134,6 +141,8 @@ the quote. Expect it to scale with the §1 billed weight, like FSC.
 - **FSC computed as a percentage when the carrier publishes it per kg** (see §5), or vice versa
 - FSC applied at a prior period's rate (airlines revise monthly or quarterly)
 - FSC or security surcharge computed on actual weight instead of chargeable weight
+- FSC on a break-upgraded billed weight flagged as an overcharge when the notice says the
+  surcharge is charged on billed weight (see §5) — this is the inverse error and just as costly
 - Chargeable weight rounded up beyond the billing increment (see `weight-rules.md` §2)
 - A legitimate weight-break billing flagged as an overcharge (see `weight-rules.md` §4)
 - DHC billed to consignee under DDP incoterm — the most common incoterm violation in air billing

@@ -49,7 +49,6 @@ documents:
     Basis: per kg of chargeable weight.
 expected:
   must_mention: ["52.5"]
-  must_not_mention: ["overcharge", "Overcharge"]
   criteria: |
     Judge only the text below, which audits an air freight invoice.
 

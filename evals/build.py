@@ -122,6 +122,12 @@ def render_graders(case: dict) -> dict:
         out[f"mentions-{i}.md"] = (
             f"---\ntype: regex\npattern: '{esc(term)}'\n---\n"
         )
+    # Patterns already written as regexes, for figures a model may format either way
+    # (e.g. "6000" or "6,000"). Not escaped.
+    for i, pat in enumerate(exp.get("must_mention_regex", []), 1):
+        out[f"mentions-re-{i}.md"] = (
+            f"---\ntype: regex\npattern: '{pat}'\n---\n"
+        )
     for i, term in enumerate(exp.get("must_not_mention", []), 1):
         out[f"absent-{i}.md"] = (
             f"---\ntype: regex\npattern: '{esc(term)}'\nmatch: not_contains\n---\n"

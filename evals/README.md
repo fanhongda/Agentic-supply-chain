@@ -47,6 +47,18 @@ Each case runs 3 times with the plugin and 3 times without it. `Δ` is the diffe
 what the skill contributed. A case that scores 1.00 in both arms is passing without the
 skill's help.
 
+### Cost
+
+Every run is a real model call on your own account. Measured on this suite: **a full
+12-case run with the baseline arm costs about USD 8.60 and takes a few minutes at
+`-j 4`**. A single case, one arm, one run is about USD 0.08.
+
+So: iterate with `--case` and `--ablation none`, and keep full runs for the moments that
+matter — before a release, after a skill change, after a model change. Pass
+`--max-cost-usd` as a hard ceiling. Judge graders (`llm`) are the paid part; regex,
+`tool_used`, `tool_order` and `file_exists` are free, which is another reason to put
+mechanical checks there.
+
 ## Cases
 
 | Case | Class | Expected | What it pins down |
@@ -89,6 +101,18 @@ satisfied the rubric in full still lost 3–0:
    thousands of characters; a five-clause conjunctive rubric over that much text makes a
    small judge model noisy. Mechanical checks belong in regex graders, which are
    deterministic, free, and read the whole message.
+3. **A forbidden-word grader cannot tell assertion from negation.** Banning "overcharge"
+   on a negative control failed a response that said "the 100 kg billed weight is
+   correct, not an overcharge" — the best possible answer. Check the verdict, not the
+   vocabulary. `must_not_mention` now suits only terms that cannot appear in a correct
+   answer at all.
+4. **Write fixtures with no open questions in them.** The clean express case first
+   omitted a bill-to party, so FOB left who-owes-the-freight genuinely open; the skill
+   added a fair side note and a strict rubric counted it as a discrepancy. The fixture
+   was at fault, not the skill.
+5. **Judge charges, not commentary.** A rubric for a clean invoice must fail only when a
+   *charge* is disputed. Observations about the incoterm or missing documents are useful
+   output, not findings.
 
 ## Editing a case
 

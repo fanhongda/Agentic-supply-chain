@@ -1,4 +1,4 @@
 ---
 type: regex
-pattern: '6000'
+pattern: '6,?000'
 ---

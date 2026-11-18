@@ -42,7 +42,8 @@ documents:
     CN -> US West, EXPRESS: USD 2.80 per kg of chargeable weight
     Fuel surcharge: 16.0% of express freight charge.
 expected:
-  must_mention: ["20.0 kg", "6000"]
+  must_mention: ["20.0 kg"]
+  must_mention_regex: ["6,?000"]
   criteria: |
     Judge only the text below, which audits an express freight invoice.
 

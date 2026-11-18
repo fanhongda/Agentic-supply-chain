@@ -38,6 +38,28 @@ This skill walks through a structured audit of a logistics freight invoice, chec
 
 ---
 
+## Precedence: which source wins
+
+Most false positives in invoice auditing come from applying a default where a document
+already states the answer. Resolve conflicts in this order, highest first:
+
+1. **The signed contract or quote** for this shipment
+2. **The carrier's own published notice or tariff** effective on the shipment date — including
+   the *basis* it states (per kg, per TEU, per CBM, percentage, and which weight or which base
+   the rate applies to)
+3. **This skill's default rules** in `references/`
+
+A billed figure that matches a higher-ranked source is **not a discrepancy**, even when a
+lower-ranked rule would have produced a different number. When sources genuinely conflict, or
+the higher-ranked one is silent, report ❓ with the figure under each reading — do not pick one
+and call the invoice wrong.
+
+Conversely, never let an invoice's own assertion stand in for a source: a line reading
+"BAF @ 15% of ocean freight" is the carrier *claiming* a basis, not a notice *establishing*
+one. The invoice under audit is evidence of what was billed, never authority for what is owed.
+
+---
+
 ## Step 1: Gather All Documents
 
 Start by collecting what the user has. Use the `pdf` skill to read any PDFs (pdfplumber is preferred for structured extraction):
