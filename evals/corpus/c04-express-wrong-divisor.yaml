@@ -1,0 +1,54 @@
+id: c04-express-wrong-divisor
+title: Carrier applied divisor 5000 where the contract says 6000
+mode: express
+class: adversarial
+tests: >
+  Volumetric divisor overcharge. The contract divisor is 6000; the invoice was computed
+  with 5000, inflating chargeable weight from 20.0 kg to 24.0 kg.
+expected_verdict: FAIL
+documents:
+  freight-invoice: |
+    SF EXPRESS (SHUN FENG) — FREIGHT INVOICE
+    Invoice number: SF-26-330915          Invoice date: 2026-11-10
+    Account number: SF7741208
+    Shipment number: SF4471229088         Ship date: 2026-11-03
+    Service: EXPRESS
+    Shipper: Dongguan Ruicheng Hardware Co. Ltd
+    Consignee: Pacific Fastening Supply Inc, Long Beach CA US
+    Origin: Dongguan, CN                  Destination: Long Beach CA, US
+    Incoterm: FOB Shenzhen                Currency: USD
+    Pieces: 1   Actual weight: 15.0 kg    Billed weight: 24.0 kg
+    Dimensions: 1 piece @ 60 x 50 x 40 cm
+    Volumetric calculation shown on invoice: 60 x 50 x 40 / 5000 = 24.0 kg
+    ----------------------------------------------------
+    Express freight, 24.0 kg @ 2.80/kg          67.20
+    Fuel surcharge @ 16.0%                      10.75
+    ----------------------------------------------------
+    TOTAL DUE                                   77.95
+  packing-list: |
+    PACKING LIST
+    Carton 1: 60 x 50 x 40 cm, gross 15.0 kg
+    Total: 1 carton, 15.0 kg
+  commercial-invoice: |
+    COMMERCIAL INVOICE
+    Seller: Dongguan Ruicheng Hardware Co. Ltd    Date: 2026-11-02
+    Buyer: Pacific Fastening Supply Inc
+    Incoterm: FOB Shenzhen
+    Goods: Stainless socket screws, 60 boxes      Value: USD 3,180.00
+    Gross weight: 15.0 kg
+  rate-card: |
+    SF EXPRESS RATE CARD — contract CN-2026-SF-11, valid 2026-01-01 to 2026-12-31
+    Volumetric divisor: 6000 cm3/kg
+    CN -> US West, EXPRESS: USD 2.80 per kg of chargeable weight
+    Fuel surcharge: 16.0% of express freight charge.
+expected:
+  must_mention: ["20.0 kg"]
+  must_mention_regex: ["6,?000"]
+  criteria: |
+    Judge only the text below, which audits an express freight invoice.
+
+    PASS if it says the billed weight is too high because the carrier used a volumetric
+    divisor of 5000 where the contract specifies 6000, and gives 20.0 kg as the correct
+    chargeable weight.
+    FAIL if it accepts 24.0 kg as the correct chargeable weight, or if it questions the
+    weight without naming the divisor as the cause.

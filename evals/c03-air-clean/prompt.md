@@ -1,0 +1,68 @@
+---
+max_turns: 20
+timeout_seconds: 600
+allowed_tools: [Read, Glob, Grep, Skill]
+tags: [clean]
+---
+
+Can you check this freight invoice for me? I want to know whether we should pay it as billed. Everything I have is below.
+
+## Freight invoice (the document under audit)
+
+```
+SKYBRIDGE AIR CARGO — FREIGHT INVOICE
+Invoice number: SB-26-77301           Invoice date: 2026-11-14
+Master air waybill: 160-55182347
+Flight date: 2026-11-07
+Service: AIR FREIGHT
+Shipper: Hangzhou Vertex Electronics Co. Ltd
+Consignee: Adler Systemtechnik GmbH, Frankfurt DE
+Origin: Shanghai PVG, CN              Destination: Frankfurt FRA, DE
+Incoterm: FCA Shanghai                Currency: USD
+Pieces: 1   Actual weight: 140.0 kg   Chargeable weight: 140.0 kg
+Dimensions: 1 piece @ 120 x 80 x 75 cm
+----------------------------------------------------
+Air freight, 140.0 kg @ 3.80/kg            532.00
+Fuel surcharge, 140.0 kg @ 0.85/kg         119.00
+Security surcharge, 140.0 kg @ 0.15/kg      21.00
+----------------------------------------------------
+TOTAL DUE                                  672.00
+```
+
+## Packing list
+
+```
+PACKING LIST
+Crate 1: 120 x 80 x 75 cm, gross 140.0 kg
+Total: 1 crate, 140.0 kg
+```
+
+## Commercial invoice
+
+```
+COMMERCIAL INVOICE
+Seller: Hangzhou Vertex Electronics Co. Ltd   Date: 2026-11-06
+Buyer: Adler Systemtechnik GmbH
+Incoterm: FCA Shanghai
+Goods: Power conversion modules, 320 units    Value: USD 48,900.00
+Gross weight: 140.0 kg
+```
+
+## Rate card
+
+```
+SKYBRIDGE AIR RATE CARD — PVG to FRA, valid 2026-10-01 to 2026-12-31
+Volumetric divisor: 6000 cm3/kg. Chargeable weight rounded up to 0.5 kg.
+Weight breaks, USD per kg:
+  +45 kg   4.40  |  +100 kg  3.80  |  +300 kg  3.20  |  +500 kg  2.95
+Security surcharge: USD 0.15 per kg of chargeable weight.
+```
+
+## Carrier surcharge notice
+
+```
+SKYBRIDGE FUEL SURCHARGE — Asia outbound
+Effective 2026-10-01: USD 0.78 per kg
+Effective 2026-11-01: USD 0.85 per kg
+Basis: per kg of chargeable weight.
+```

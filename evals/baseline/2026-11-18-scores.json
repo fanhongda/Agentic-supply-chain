@@ -1,0 +1,90 @@
+{
+  "source": "baseline-final.json",
+  "rows": [
+    {
+      "case": "c01-express-clean",
+      "with": 1.0,
+      "without": 0.5555555555555555,
+      "delta": 0.44444444444444453,
+      "runs": 3
+    },
+    {
+      "case": "c02-sea-fcl-clean",
+      "with": 1.0,
+      "without": 0.611111111111111,
+      "delta": 0.38888888888888895,
+      "runs": 3
+    },
+    {
+      "case": "c03-air-clean",
+      "with": 1.0,
+      "without": 0.7142857142857143,
+      "delta": 0.2857142857142857,
+      "runs": 3
+    },
+    {
+      "case": "c04-express-wrong-divisor",
+      "with": 1.0,
+      "without": 0.6666666666666666,
+      "delta": 0.33333333333333337,
+      "runs": 3
+    },
+    {
+      "case": "c05-express-stale-fuel-rate",
+      "with": 1.0,
+      "without": 0.6666666666666666,
+      "delta": 0.33333333333333337,
+      "runs": 3
+    },
+    {
+      "case": "c06-sea-baf-as-percentage",
+      "with": 1.0,
+      "without": 0.7142857142857143,
+      "delta": 0.2857142857142857,
+      "runs": 3
+    },
+    {
+      "case": "c07-air-ddp-duty-to-consignee",
+      "with": 1.0,
+      "without": 0.6190476190476191,
+      "delta": 0.38095238095238093,
+      "runs": 3
+    },
+    {
+      "case": "c08-sea-phantom-accessorial",
+      "with": 0.8888888888888888,
+      "without": 0.5555555555555555,
+      "delta": 0.33333333333333337,
+      "runs": 3
+    },
+    {
+      "case": "c09-express-currency-basis",
+      "with": 0.7777777777777777,
+      "without": 0.5555555555555555,
+      "delta": 0.2222222222222222,
+      "runs": 3
+    },
+    {
+      "case": "c10-air-weight-break-legit",
+      "with": 1.0,
+      "without": 0.6,
+      "delta": 0.4,
+      "runs": 3
+    },
+    {
+      "case": "c11-air-rounding-legit",
+      "with": 1.0,
+      "without": 0.6,
+      "delta": 0.4,
+      "runs": 3
+    },
+    {
+      "case": "c12-non-trigger",
+      "with": 1.0,
+      "without": 1.0,
+      "delta": 0.0,
+      "runs": 3
+    }
+  ],
+  "mean_delta": 0.31732804232804235
+}

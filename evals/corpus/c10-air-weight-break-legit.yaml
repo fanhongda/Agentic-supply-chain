@@ -1,0 +1,60 @@
+id: c10-air-weight-break-legit
+title: NEGATIVE CONTROL — billed at the 100 kg break because the total is cheaper
+mode: air
+class: negative-control
+tests: >
+  False-positive guard. Chargeable weight is 95.0 kg but the carrier billed 100.0 kg,
+  because 100 x 3.50 = 350.00 beats 95 x 4.20 = 399.00. This is legitimate and
+  favourable to the payer. A naive "billed weight exceeds chargeable weight" rule fires
+  here, which is exactly the failure this case exists to catch.
+expected_verdict: PASS
+documents:
+  freight-invoice: |
+    SKYBRIDGE AIR CARGO — FREIGHT INVOICE
+    Invoice number: SB-26-77410           Invoice date: 2026-11-15
+    Master air waybill: 160-55188123
+    Flight date: 2026-11-08
+    Service: AIR FREIGHT
+    Shipper: Hangzhou Vertex Electronics Co. Ltd
+    Consignee: Adler Systemtechnik GmbH, Frankfurt DE
+    Origin: Shanghai PVG, CN              Destination: Frankfurt FRA, DE
+    Incoterm: FCA Shanghai                Currency: USD
+    Pieces: 1   Actual weight: 95.0 kg    Chargeable weight: 95.0 kg
+    Dimensions: 1 piece @ 100 x 70 x 60 cm
+    Billed weight: 100.0 kg (charged at the +100 kg weight break)
+    ----------------------------------------------------
+    Air freight, 100.0 kg @ 3.50/kg            350.00
+    Fuel surcharge, 100.0 kg @ 0.85/kg          85.00
+    ----------------------------------------------------
+    TOTAL DUE                                  435.00
+  packing-list: |
+    PACKING LIST
+    Crate 1: 100 x 70 x 60 cm, gross 95.0 kg
+    Total: 1 crate, 95.0 kg
+  commercial-invoice: |
+    COMMERCIAL INVOICE
+    Seller: Hangzhou Vertex Electronics Co. Ltd   Date: 2026-11-07
+    Buyer: Adler Systemtechnik GmbH
+    Incoterm: FCA Shanghai
+    Goods: Power conversion modules, 210 units    Value: USD 31,400.00
+    Gross weight: 95.0 kg
+  rate-card: |
+    SKYBRIDGE AIR RATE CARD — PVG to FRA, valid 2026-10-01 to 2026-12-31
+    Volumetric divisor: 6000 cm3/kg. Chargeable weight rounded up to 0.5 kg.
+    Weight breaks, USD per kg:
+      +45 kg   4.20  |  +100 kg  3.50  |  +300 kg  3.10
+    Charging at a higher weight break is permitted where the resulting total is lower.
+  surcharge-notice: |
+    SKYBRIDGE FUEL SURCHARGE — Asia outbound
+    Effective 2026-11-01: USD 0.85 per kg
+    Basis: per kg of billed weight.
+expected:
+  must_mention: ["350.00"]
+  criteria: |
+    Judge only the text below, which audits an air freight invoice.
+
+    PASS if it accepts the billed weight of 100.0 kg as legitimate even though the chargeable
+    weight is 95.0 kg, because 100 kg at the 100 kg break costs 350.00 while 95 kg at the
+    45 kg break would cost 399.00.
+    FAIL if it treats the 100.0 kg billed weight as an overcharge or a discrepancy, or if it
+    objects to the fuel surcharge being computed on 100.0 kg.

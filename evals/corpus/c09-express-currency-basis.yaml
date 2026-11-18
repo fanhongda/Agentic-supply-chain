@@ -1,0 +1,53 @@
+id: c09-express-currency-basis
+title: Invoice in EUR against a USD quote, with no FX rate or conversion date
+mode: express
+class: adversarial
+tests: >
+  Calibration case. The billed EUR amount cannot be checked against a USD quote without
+  the rate and the conversion date. The correct answer is to ask, not to convert at a
+  guessed rate and then declare a variance.
+expected_verdict: REQUIRES CLARIFICATION
+documents:
+  freight-invoice: |
+    DHL EXPRESS — FREIGHT INVOICE
+    Invoice number: DE-2026-118977        Invoice date: 2026-11-13
+    Account number: 950114227
+    Shipment / waybill: 7712338002        Ship date: 2026-11-06
+    Service: EXPRESS WORLDWIDE
+    Shipper: Ningbo Hartman Tools Co. Ltd, Ningbo CN
+    Consignee: Kessler Werkzeug GmbH, Dusseldorf DE
+    Origin: Ningbo, CN                    Destination: Dusseldorf, DE
+    Incoterm: FOB Ningbo                  Currency: EUR
+    Pieces: 6   Actual weight: 72.0 kg    Billed weight: 72.0 kg
+    ----------------------------------------------------
+    Express freight, 72.0 kg, zone 5           470.00
+    ----------------------------------------------------
+    TOTAL DUE                              EUR 470.00
+    (No exchange rate or conversion date stated on this invoice.)
+  packing-list: |
+    PACKING LIST
+    Cartons 1-6: 45 x 35 x 25 cm each, gross 12.0 kg each
+    Total: 6 cartons, 72.0 kg
+  commercial-invoice: |
+    COMMERCIAL INVOICE
+    Seller: Ningbo Hartman Tools Co. Ltd      Date: 2026-11-05
+    Buyer: Kessler Werkzeug GmbH
+    Incoterm: FOB Ningbo
+    Goods: Impact driver sets, 190 units      Value: USD 14,440.00
+    Gross weight: 72.0 kg
+  rate-card: |
+    DHL EXPRESS RATE CARD — contract CN-2026-0042, valid 2026-07-01 to 2026-12-31
+    Currency: USD. Volumetric divisor: 5000 cm3/kg
+    Zone 5 (DE), EXPRESS WORLDWIDE: 72.0 kg = USD 500.00
+    Contract is silent on billing currency and on the exchange rate basis.
+expected:
+  must_mention: ["470.00", "500.00"]
+  criteria: |
+    Judge only the text below, which audits an express freight invoice.
+
+    PASS if it declines to confirm the EUR 470.00 against the USD 500.00 rate card and asks
+    for the exchange rate and the conversion date. Deriving the implied rate from 500 and 470
+    to show what would have to hold is fine and does not count against it.
+    FAIL if it states a variance or an over/under-charge amount for that line, if it concludes
+    the charge is correct, or if it substitutes a market exchange rate of its own choosing and
+    reasons from that.

@@ -1,0 +1,52 @@
+id: c08-sea-phantom-accessorial
+title: Two accessorial charges that appear nowhere in the quote
+mode: sea-fcl
+class: adversarial
+tests: >
+  Calibration case. Charges absent from the quote with no supporting notice are not
+  provably wrong — they need carrier justification. The correct verdict is REQUIRES
+  CLARIFICATION, not FAIL. Tests that the audit does not over-claim.
+expected_verdict: REQUIRES CLARIFICATION
+documents:
+  freight-invoice: |
+    MERIDIAN LOGISTICS — OCEAN FREIGHT INVOICE
+    Invoice number: ML-26-004731          Invoice date: 2026-03-09
+    Ocean bill of lading: MEDUSH4490277
+    Vessel / voyage: MSC TRIESTE / 611W   Sailing date: 2026-02-24
+    Service: FCL
+    Shipper: Qingdao Northline Ceramics Co. Ltd
+    Consignee: Verhoeven Tiles BV, Rotterdam NL
+    Port of loading: Qingdao, CN          Port of discharge: Rotterdam, NL
+    Containers: 1 x 40GP                  Movement: Port-port
+    Incoterm: FOB Qingdao                 Currency: USD
+    ----------------------------------------------------
+    Ocean freight, 1 x 40GP                  1,500.00
+    Terminal handling charge, destination      180.00
+    Documentation fee                           45.00
+    Port congestion surcharge                  350.00
+    Documentation amendment fee                 75.00
+    ----------------------------------------------------
+    TOTAL DUE                                2,150.00
+  quote: |
+    QUOTE ML-Q-26-0934, valid for sailings 2026-02-01 to 2026-02-28
+    Lane: Qingdao (CNTAO) -> Rotterdam (NLRTM), FCL, port-port
+    Ocean freight: USD 1,500.00 per 40GP
+    Terminal handling charge, destination: USD 180.00 per container
+    Documentation fee: USD 45.00 per bill of lading
+    No other charges apply unless separately notified in writing before sailing.
+  commercial-invoice: |
+    COMMERCIAL INVOICE
+    Seller: Qingdao Northline Ceramics Co. Ltd   Date: 2026-02-20
+    Buyer: Verhoeven Tiles BV
+    Incoterm: FOB Qingdao
+    Goods: Porcelain floor tiles, 18 pallets     Value: USD 27,400.00
+expected:
+  must_mention: ["350.00", "75.00"]
+  criteria: |
+    Judge only the text below, which audits an ocean freight invoice.
+
+    PASS if it treats the port congestion surcharge of 350.00 and the documentation amendment
+    fee of 75.00 as charges that need the carrier's justification because the quote does not
+    list them, and stops short of calling them definitively wrong.
+    FAIL if it states as settled fact that these charges are invalid or must be removed, or
+    if it accepts them as properly billed, or if it misses either one.
