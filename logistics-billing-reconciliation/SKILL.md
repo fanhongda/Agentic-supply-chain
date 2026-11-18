@@ -1,9 +1,27 @@
 ---
 name: logistics-billing-reconciliation
-description: Use this skill to reconcile, audit, or verify any logistics freight invoice or shipping bill. Trigger whenever the user shares a freight invoice (PDF or text), asks to check or verify shipping charges, wants to compare billed amounts against a quote or rate card, or needs to validate carrier charges for express, sea, or air shipments. Also trigger for chargeable weight calculations, fuel surcharge verification, incoterm compliance checks, or any request to "check the invoice," "reconcile the bill," or "verify the freight charges." If the user uploads a carrier invoice from DHL, FedEx, Shun Feng, a sea freight forwarder, or an airline, use this skill immediately — do not attempt to reconcile without it. Will be extended in the future to cover warehouse billing as part of an overall billing reconciliation suite.
+description: Audits a logistics freight invoice (express, sea LCL/FCL, or air) against the quote, rate card, and shipping documents, then reports line-item discrepancies with a pass/fail verdict.
 ---
 
 # Logistics Billing Reconciliation
+
+## When to Use This Skill
+
+Use this skill whenever the user:
+
+- shares a freight invoice or shipping bill (PDF or text) and wants it checked
+- asks to verify, audit, or reconcile shipping charges — "check the invoice," "reconcile the bill,"
+  "verify the freight charges"
+- wants billed amounts compared against a quote or rate card
+- needs a chargeable weight calculation, a fuel surcharge or BAF verification, or an incoterm
+  compliance check
+
+Carriers and modes covered: DHL Express, FedEx, Shun Feng (顺丰), sea freight forwarders (LCL and
+FCL), and airlines. If the user uploads a carrier invoice from any of these, use this skill rather
+than reconciling ad hoc — the charge bases (per kg, per TEU, per CBM, percentage) are easy to get
+wrong and a wrong basis produces a confident wrong verdict.
+
+Warehouse billing is a planned extension, not yet covered → `references/extension-points.md`.
 
 ## What This Skill Does
 
@@ -42,7 +60,8 @@ def extract_pdf(path):
 
 > "I need the original quote or rate card to verify the billed amounts. Please share the document, or paste the key rates as text. If you have a RAG system set up with rate data, I can query it instead."
 
-<!-- RAG_HOOK: Replace the above user prompt with a RAG query when a rate knowledge base is available. -->
+<!-- RATE_LOOKUP: replace the prompt above with a structured query by (carrier, lane, service,
+     effective_date, charge_type). Rate lookup is an exact query, not a vector search. -->
 
 ---
 
@@ -62,6 +81,7 @@ From the freight invoice, extract these fields:
 | Destination | Destination port / city / country |
 | Inco-term | Trade term (EXW, FOB, CIF, DDP, DAP, etc.) |
 | Invoice date | Billing date |
+| Shipment date | Sailing / flight / pickup date — **required**: every surcharge lookup uses the rate effective on this date, not today's rate |
 | Currency | Billing currency |
 
 Present these to the user for confirmation before proceeding.
@@ -86,7 +106,14 @@ Once identified, read the corresponding reference file and run its checklist:
 | Sea LCL or FCL | `references/sea-module.md` |
 | Air | `references/air-module.md` |
 
-For fuel/oil surcharge lookups in any module, refer to `references/carrier-surcharge-urls.md`.
+Shared references used by every module:
+
+| Reference | Covers |
+|-----------|--------|
+| `references/weight-rules.md` | Volumetric divisors, rounding increments, multi-piece aggregation, weight breaks, weight tolerance |
+| `references/carrier-surcharge-urls.md` | Where to look up fuel/oil surcharge, BAF and CAF rates, and on which basis each is charged |
+
+**Always resolve a surcharge rate as of the shipment date**, not the current published rate.
 
 ---
 
@@ -107,16 +134,21 @@ After completing the module checklist, output a structured report using this exa
 
 ## Line-Item Results
 
-| # | Charge | Billed | Expected | Variance | Status |
-|---|--------|--------|----------|----------|--------|
-| 1 | Ocean freight | $1,200 | $1,200 | $0 | ✅ |
-| 2 | Fuel surcharge | $180 | $156 | +$24 | ❌ |
-| 3 | Non-stackable surcharge | $90 | ? | ? | ❓ |
+| # | Charge | Basis & rate used | Billed | Expected | Variance | Status |
+|---|--------|-------------------|--------|----------|----------|--------|
+| 1 | Ocean freight | quote, 2 × 40HC | $1,200 | $1,200 | $0 | ✅ |
+| 2 | BAF | $478/TEU × 4 TEU (notice eff. 2026-02-01) | $2,000 | $1,912 | +$88 | ❌ |
+| 3 | Non-stackable surcharge | n/a — evidence pending | $90 | ? | ? | ❓ |
 
 Status: ✅ matched  ❌ discrepancy  ❓ needs clarification
 
+The **Basis & rate used** column is not optional. State the basis (per kg / per TEU / per CBM /
+per revenue ton / percentage), the rate, and the rate's effective date for every computed line.
+A figure without its basis cannot be disputed with a carrier.
+
 ## Discrepancies (❌)
-[For each: what was billed, what was expected, and why it's wrong.]
+[For each: what was billed, what was expected, the arithmetic that produced the
+expected figure (inputs, basis, rate, effective date), and why it's wrong.]
 
 ## Items Needing Clarification (❓)
 [For each: what information is needed, and who should provide it.]
@@ -133,6 +165,7 @@ Status: ✅ matched  ❌ discrepancy  ❓ needs clarification
 ## Modularity Notes (for future maintenance)
 
 - Each transport mode is a self-contained reference file — update a module without touching this file.
-- Surcharge URLs are centralized in `references/carrier-surcharge-urls.md` — add new carriers there.
-- All RAG integration points are marked with `<!-- RAG_HOOK -->` in each module file.
+- Surcharge sources and **charge bases** are centralized in `references/carrier-surcharge-urls.md` — add new carriers there.
+- Weight arithmetic lives only in `references/weight-rules.md` — divisors, rounding increments, aggregation, and weight breaks are defined once and referenced by every module.
+- Rate and surcharge lookup points are marked with `<!-- RATE_LOOKUP -->` in each module file.
 - To add warehouse billing: create `references/warehouse-module.md` and add "Warehouse" to Step 3's routing table.

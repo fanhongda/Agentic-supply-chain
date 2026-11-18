@@ -211,11 +211,11 @@ POST /copilotstudio/environments/{envId}/bots/{botId}/api/makerevaluation/testse
 
 与 `research/2026-11-landscape.md` §7 的差异：**MCP server 提前，Copilot Studio 前置条件确认提前。**
 
-**Phase 0 — 止血（1–2 天）**
-- [ ] 修海运 BAF 口径（per TEU / per CBM，非百分比）
-- [ ] 修空运 FSC 口径（per kg / percent 可配置）
-- [ ] 补 0.5 kg 进位与重量档位，理清与容差的关系
-- [ ] **按 D2 改 `description` 为单行**，触发细节移入正文 `## When to use`
+**Phase 0 — 止血（1–2 天）** ✅ 2026-11-18 完成
+- [x] 修海运 BAF 口径（per TEU / per CBM，非百分比）· 另把 CAF 单独拆出（CAF 确实是百分比）
+- [x] 修空运 FSC 口径（per kg / percent 可配置）· 另修正 express FSC 的「适用基数」问题
+- [x] 补 0.5 kg 进位与重量档位，理清与容差的关系 → 新增共用文件 `references/weight-rules.md`
+- [x] **按 D2 改 `description` 为单行**（182 字符），触发细节移入正文 `## When to Use This Skill`
 
 **Phase 1 — 测试基建 + 前置条件确认（1 周）**
 - [ ] `claude plugin eval init`，10 个用例（3 正常 / 5 对抗 / 2 负样本）
@@ -253,14 +253,14 @@ POST /copilotstudio/environments/{envId}/bots/{botId}/api/makerevaluation/testse
 
 | # | 动作 | 为什么 | 阶段 |
 |---|---|---|---|
-| 1 | `description` 改单行，触发细节进正文 | Copilot Studio 会静默跳过超长 description 的 skill | P0 |
-| 2 | 确认 `SKILL.md` 为 UTF-8 无 BOM、frontmatter 合法 YAML | 加载期校验 | P0 |
-| 3 | 修 BAF / FSC 口径 | 结论会算错 | P0 |
+| 1 | ~~`description` 改单行，触发细节进正文~~ ✅ | Copilot Studio 会静默跳过超长 description 的 skill | P0 |
+| 2 | ~~确认 `SKILL.md` 为 UTF-8 无 BOM、frontmatter 合法 YAML~~ ✅ 已验证（无 BOM、无 CRLF、frontmatter 为合法 key: value 映射、description 无需加引号） | 加载期校验 | P0 |
+| 3 | ~~修 BAF / FSC 口径~~ ✅ | 结论会算错 | P0 |
 | 4 | 把容差与承运商参数抽到 `config/tolerances.yaml`、`config/carriers.yaml` | D6 | P1 |
 | 5 | 新增 `mcp-server/`，计算逻辑搬进去 | D1，两平台通用 | P2 |
-| 6 | 把 `<!-- RAG_HOOK -->` 拆成 `<!-- RATE_LOOKUP -->`（结构化查询）与 `<!-- CONTRACT_CLAUSE_RAG -->`（文本检索） | 费率查询不是 RAG；也对应 Dataverse vs 知识源两种落地 | P2 |
+| 6 | ~~把 `<!-- RAG_HOOK -->` 改名为 `<!-- RATE_LOOKUP -->`~~ ✅ 随 P0 一并完成（重写这些段落时顺手做了）；`CONTRACT_CLAUSE_RAG` 待实际有合同条款检索需求时再加 | 费率查询不是 RAG；也对应 Dataverse vs 知识源两种落地 | P2 |
 | 7 | `evals/corpus/` 平台中立语料 + 各平台 runner 适配 | ④的可移植性只能这样拿到 | P1 |
-| 8 | README 增加"目标平台：Copilot Studio"说明 | 让后来人不写进不可移植的依赖 | P0 |
+| 8 | ~~README 增加"目标平台：Copilot Studio"说明~~ ✅ | 让后来人不写进不可移植的依赖 | P0 |
 
 ---
 

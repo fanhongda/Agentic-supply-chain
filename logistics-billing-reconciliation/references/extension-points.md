@@ -38,16 +38,25 @@ No changes to any module file are needed.
 
 ---
 
-## RAG Integration
+## Rate & Surcharge Lookup Integration
 
-All RAG integration points are marked with `<!-- RAG_HOOK -->` in:
+Lookup points are marked with `<!-- RATE_LOOKUP -->` in:
 - `SKILL.md` (rate card prompt)
 - `references/express-module.md` (rate card, fuel surcharge)
 - `references/sea-module.md` (rate card, BAF)
 - `references/air-module.md` (rate card, fuel surcharge)
+- `references/weight-rules.md` (divisor, increment, aggregation, weight breaks)
 - `references/carrier-surcharge-urls.md` (surcharge lookup)
 
-When integrating RAG:
-1. Replace each `<!-- RAG_HOOK -->` comment's preceding user prompt with a RAG query.
-2. The query parameters are always: carrier, lane (origin→destination), effective_date, charge_type.
-3. If RAG returns no result, fall back to the user prompt — don't silently skip the check.
+Two different mechanisms, and the distinction matters:
+
+| Need | Mechanism | Why |
+|---|---|---|
+| Rates, surcharges, divisors, weight breaks | **Exact keyed query** (Dataverse table or MCP tool) | Parameters are precise: carrier, lane, service, container type, effective-date range. A vector search over a rate card returns plausible neighbours, which is the worst possible failure mode for a number you are about to dispute |
+| Contract clause wording, carrier tariff prose | Vector search (RAG) | Free text, no key to query on |
+
+When integrating:
+1. Replace each `<!-- RATE_LOOKUP -->` comment's preceding user prompt with the keyed query.
+2. Query parameters always include: carrier, lane (origin→destination), charge_type, effective_date.
+3. The response must carry the **basis**, not just a value — see `carrier-surcharge-urls.md`.
+4. If the lookup returns no result, fall back to the user prompt — don't silently skip the check.

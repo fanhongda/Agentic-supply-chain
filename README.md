@@ -28,7 +28,7 @@ A structured Claude skill for auditing freight invoices against source documents
 
 **Designed to grow:**
 - Plug in new carrier surcharge URLs without touching core logic
-- RAG hooks marked throughout — swap user prompts for rate database queries when ready
+- `RATE_LOOKUP` hooks marked throughout — swap user prompts for keyed rate-store queries when ready
 - Extension point for warehouse billing as the next module
 
 ---
@@ -38,5 +38,5 @@ A structured Claude skill for auditing freight invoices against source documents
 - [ ] Warehouse billing reconciliation module
 - [ ] Sea carrier surcharge URL registry (COSCO, MSC, Maersk, Evergreen)
 - [ ] Air carrier fuel surcharge registry (Cathay Cargo, SIA Cargo, Emirates SkyCargo)
-- [ ] RAG integration for live rate card lookups
+- [ ] Rate store for live rate card and surcharge lookups (keyed query, not vector search)
 - [ ] Combined billing dashboard (freight + warehouse)
