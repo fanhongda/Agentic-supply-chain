@@ -1,0 +1,57 @@
+id: c07-air-ddp-duty-to-consignee
+title: Duty and destination handling billed to consignee on a DDP shipment
+mode: air
+class: adversarial
+tests: >
+  Incoterm violation. The commercial invoice states DDP, so import duty and DHC are the
+  seller's cost and must not appear on a consignee invoice. Freight and FSC are correct,
+  so the audit must isolate the two offending lines.
+expected_verdict: FAIL
+documents:
+  freight-invoice: |
+    SKYBRIDGE AIR CARGO — FREIGHT INVOICE
+    Invoice number: SB-26-77588           Invoice date: 2026-11-16
+    Master air waybill: 160-55194880
+    Flight date: 2026-11-09
+    Service: AIR FREIGHT
+    Bill to: Crestline Medical Devices Inc (CONSIGNEE)
+    Shipper: Shenzhen Anhe Biotech Co. Ltd
+    Consignee: Crestline Medical Devices Inc, Los Angeles CA US
+    Origin: Shanghai PVG, CN              Destination: Los Angeles LAX, US
+    Incoterm: DDP Los Angeles             Currency: USD
+    Pieces: 2   Actual weight: 200.0 kg   Chargeable weight: 200.0 kg
+    ----------------------------------------------------
+    Air freight, 200.0 kg @ 4.90/kg            980.00
+    Fuel surcharge, 200.0 kg @ 0.85/kg         170.00
+    Destination handling charge                180.00
+    Import duty and tax advanced               420.00
+    ----------------------------------------------------
+    TOTAL DUE                                1,750.00
+  commercial-invoice: |
+    COMMERCIAL INVOICE
+    Seller: Shenzhen Anhe Biotech Co. Ltd        Date: 2026-11-08
+    Buyer: Crestline Medical Devices Inc
+    Incoterm: DDP Los Angeles
+    Goods: Infusion pump assemblies, 80 units    Value: USD 96,000.00
+    Gross weight: 200.0 kg
+  quote: |
+    QUOTE SB-Q-26-2240, valid 2026-11-01 to 2026-11-30
+    Lane: PVG -> LAX, air freight, DDP
+    Air freight: USD 4.90 per kg of chargeable weight
+    Fuel surcharge: as per carrier notice on flight date
+    All destination charges, duties and taxes included in the seller's DDP price.
+  surcharge-notice: |
+    SKYBRIDGE FUEL SURCHARGE — Asia outbound
+    Effective 2026-11-01: USD 0.85 per kg
+    Basis: per kg of chargeable weight.
+expected:
+  must_mention: ["DDP", "180.00", "420.00"]
+  criteria: |
+    Judge only the text below, which audits an air freight invoice.
+
+    PASS if it objects to BOTH the destination handling charge of 180.00 AND the import duty
+    of 420.00, on the ground that the DDP term puts them on the seller rather than the
+    consignee being billed.
+    FAIL if it objects to only one of those two charges, if it accepts either as properly
+    billed, or if it also objects to the air freight of 980.00 or the fuel surcharge of
+    170.00.

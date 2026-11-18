@@ -1,0 +1,59 @@
+id: c11-air-rounding-legit
+title: NEGATIVE CONTROL — legitimate round-up to the 0.5 kg billing increment
+mode: air
+class: negative-control
+tests: >
+  False-positive guard. Volumetric weight is 52.25 kg; the carrier billed 52.5 kg,
+  which is the correct round-up to the 0.5 kg increment. The retired 0.5 kg tolerance
+  would have masked a real 0.4 kg overcharge while a naive exact-match rule fires here.
+expected_verdict: PASS
+documents:
+  freight-invoice: |
+    SKYBRIDGE AIR CARGO — FREIGHT INVOICE
+    Invoice number: SB-26-77455           Invoice date: 2026-11-15
+    Master air waybill: 160-55190447
+    Flight date: 2026-11-08
+    Service: AIR FREIGHT
+    Shipper: Wuxi Caldera Instruments Co. Ltd
+    Consignee: Adler Systemtechnik GmbH, Frankfurt DE
+    Origin: Shanghai PVG, CN              Destination: Frankfurt FRA, DE
+    Incoterm: FCA Shanghai                Currency: USD
+    Pieces: 1   Actual weight: 50.0 kg
+    Dimensions: 1 piece @ 95 x 60 x 55 cm
+    Volumetric weight: 95 x 60 x 55 / 6000 = 52.25 kg
+    Billed weight: 52.5 kg (rounded up to the 0.5 kg increment)
+    ----------------------------------------------------
+    Air freight, 52.5 kg @ 4.00/kg             210.00
+    Fuel surcharge, 52.5 kg @ 0.80/kg           42.00
+    ----------------------------------------------------
+    TOTAL DUE                                  252.00
+  packing-list: |
+    PACKING LIST
+    Crate 1: 95 x 60 x 55 cm, gross 50.0 kg
+    Total: 1 crate, 50.0 kg
+  commercial-invoice: |
+    COMMERCIAL INVOICE
+    Seller: Wuxi Caldera Instruments Co. Ltd      Date: 2026-11-07
+    Buyer: Adler Systemtechnik GmbH
+    Incoterm: FCA Shanghai
+    Goods: Calibration benches, 4 units           Value: USD 22,800.00
+    Gross weight: 50.0 kg
+  rate-card: |
+    SKYBRIDGE AIR RATE CARD — PVG to FRA, valid 2026-10-01 to 2026-12-31
+    Volumetric divisor: 6000 cm3/kg. Chargeable weight rounded UP to 0.5 kg.
+    Weight breaks, USD per kg:
+      +45 kg   4.00  |  +100 kg  3.50  |  +300 kg  3.10
+  surcharge-notice: |
+    SKYBRIDGE FUEL SURCHARGE — Asia outbound
+    Effective 2026-11-01: USD 0.80 per kg
+    Basis: per kg of chargeable weight.
+expected:
+  must_mention: ["52.5"]
+  must_not_mention: ["overcharge", "Overcharge"]
+  criteria: |
+    Judge only the text below, which audits an air freight invoice.
+
+    PASS if it accepts the billed weight of 52.5 kg as the correct round-up of the 52.25 kg
+    volumetric weight to the 0.5 kg billing increment.
+    FAIL if it treats the 0.25 kg difference as an overcharge or discrepancy, or if it says
+    the chargeable weight should have been 52.25 kg or 50.0 kg.

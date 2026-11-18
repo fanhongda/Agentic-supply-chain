@@ -6,6 +6,8 @@ A collection of agentic tools and Claude skills for supply chain operations — 
 
 - [`design.md`](./design.md) — architecture, and how each asset maps onto the target platform
 - [`research/2026-11-landscape.md`](./research/2026-11-landscape.md) — open-source landscape, data sources, testing approaches
+- [`evals/README.md`](./evals/README.md) — the eval suite: platform-neutral corpus, graders, how to run it
+- [`docs/copilot-studio-prerequisites.md`](./docs/copilot-studio-prerequisites.md) — what IT and security need to confirm before Phase 2
 
 **Target platform:** this work ships on Microsoft Copilot Studio (the sanctioned agent platform here);
 Claude Code is the development and evaluation environment. Keep contributions portable — see `design.md` §4–5
@@ -17,7 +19,7 @@ shell access or the local filesystem.
 
 ## Skills
 
-### [`logistics-billing-reconciliation`](./logistics-billing-reconciliation/)
+### [`logistics-billing-reconciliation`](./skills/logistics-billing-reconciliation/)
 
 A structured Claude skill for auditing freight invoices against source documents. Catches billing errors, unauthorized surcharges, and incoterm violations before you pay.
 

@@ -1,0 +1,21 @@
+id: c12-non-trigger
+title: NEGATIVE CONTROL — a shipping question that is not an invoice audit
+mode: none
+class: non-trigger
+tests: >
+  Trigger discipline. A general shipping question should get a general answer, not a
+  reconciliation report and not a demand for invoice documents. Matters doubly for the
+  Copilot Studio port, where an over-eager skill description hijacks unrelated requests.
+expected_verdict: NOT APPLICABLE
+documents: {}
+prompt_override: >
+  We're shipping 2 pallets of ceramic tiles from Qingdao to Rotterdam next month,
+  about 1.8 CBM and 900 kg total. Is sea LCL or air likely to be cheaper, and roughly
+  how long does each take?
+expected:
+  criteria: |
+    Judge only the text below, which replies to someone asking which shipping mode to use.
+
+    PASS if it answers the question, comparing sea LCL and air on cost and transit time.
+    FAIL if it instead produces a billing or invoice reconciliation report, or asks the
+    person to supply a freight invoice, commercial invoice, packing list, quote or rate card.

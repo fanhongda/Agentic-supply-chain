@@ -1,0 +1,56 @@
+id: c02-sea-fcl-clean
+title: Clean FCL invoice with BAF charged per TEU
+mode: sea-fcl
+class: clean
+tests: >
+  BAF billed correctly on a per-TEU basis. A skill that computes BAF as a percentage
+  of ocean freight cannot reach the right expected figure here, so this case fails
+  unless the per-TEU basis is applied and 2 x 40HC is counted as 4 TEU.
+expected_verdict: PASS
+documents:
+  freight-invoice: |
+    MERIDIAN LOGISTICS — OCEAN FREIGHT INVOICE
+    Invoice number: ML-26-004417          Invoice date: 2026-03-02
+    Ocean bill of lading: MEDUSH4471220
+    Vessel / voyage: MSC AMALFI / 606W    Sailing date: 2026-02-10
+    Service: FCL
+    Shipper: Suzhou Linwell Precision Co. Ltd
+    Consignee: Brouwer Industrial BV, Rotterdam NL
+    Port of loading: Shanghai, CN         Port of discharge: Rotterdam, NL
+    Containers: 2 x 40HC                  Movement: Port-port
+    Incoterm: FOB Shanghai                Currency: USD
+    ----------------------------------------------------
+    Ocean freight, 2 x 40HC @ 2,400.00       4,800.00
+    BAF, 4 TEU @ 120.00/TEU                    480.00
+    Terminal handling charge, destination      240.00
+    Documentation fee                           50.00
+    ----------------------------------------------------
+    TOTAL DUE                                5,570.00
+  quote: |
+    QUOTE ML-Q-26-0881, valid for sailings 2026-02-01 to 2026-02-28
+    Lane: Shanghai (CNSHA) -> Rotterdam (NLRTM), FCL, port-port
+    Ocean freight: USD 2,400.00 per 40HC
+    Terminal handling charge, destination: USD 120.00 per container
+    Documentation fee: USD 50.00 per bill of lading
+    BAF: as per carrier notice in force on the sailing date — NOT included above
+  commercial-invoice: |
+    COMMERCIAL INVOICE
+    Seller: Suzhou Linwell Precision Co. Ltd     Date: 2026-02-06
+    Buyer: Brouwer Industrial BV
+    Incoterm: FOB Shanghai
+    Goods: CNC spindle housings, 1,240 units     Value: USD 184,600.00
+  surcharge-notice: |
+    CARRIER BAF NOTICE
+    Trade: Asia -> North Europe
+    Effective 2026-02-01: USD 120.00 per TEU
+    Effective 2026-03-01: USD 134.00 per TEU
+    Basis: per TEU. 20ft = 1 TEU, 40ft and 40HC = 2 TEU.
+expected:
+  must_mention: ["480.00", "4 TEU"]
+  criteria: |
+    Judge only the text below, which audits an ocean freight invoice.
+
+    PASS if it accepts the BAF charge of 480.00 as correct and arrives at it by counting
+    2 x 40HC as 4 TEU at 120.00 per TEU.
+    FAIL if it reports the BAF as an overcharge or a discrepancy, if it computes BAF from a
+    percentage of ocean freight, or if it counts 2 x 40HC as 2 TEU.
